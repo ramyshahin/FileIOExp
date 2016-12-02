@@ -6,7 +6,7 @@
 const long long K = 1000;
 const long long M = 1000 * K;
 const long long G = 1000 * M;
-const long long DATA_SET_SIZE = 10 * K;
+const long long DATA_SET_SIZE = 10 * G;
 
 using namespace std;
 

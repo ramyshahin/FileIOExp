@@ -14,8 +14,8 @@ const char* IN_C = "c.bin";
 
 const char* OUT = "out.bin";
 
-const int IN_FLAGS = O_RDONLY;
-const int OUT_FLAGS = O_WRONLY;
+const int IN_FLAGS = O_RDONLY;// | O_DIRECT;
+const int OUT_FLAGS = O_CREAT | O_WRONLY;// | O_DIRECT;
 
 using namespace std;
 
@@ -44,11 +44,12 @@ void aTimes2(long long count)
     close(fd_out);
 }
 
-const long long G = 1000*1000*1000;
+const long long M = 1000*1000;
+const long long G = 1000*M;
 
 int main()
 {
-    for(long long count=G; count < 10*G; count+=G) {
+    for(long long count=M; count <= 10*M; count+=M) {
         cout << count << "\t";
 
         double totalTime = 0.0;
@@ -60,7 +61,7 @@ int main()
 
             totalTime += time;
 
-            cout << time << "\n";
+            cout << time << "\t";
         }
 
         cout << (totalTime / REPITITIONS) << endl;
