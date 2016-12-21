@@ -35,3 +35,10 @@
 # output files
 *.bin
 
+# kernel module outputs
+*.cmd
+*.mod
+*.symvers
+*.order
+*.mod.c
+
