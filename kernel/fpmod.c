@@ -7,7 +7,9 @@
 #include <linux/module.h>
 #include <linux/proc_fs.h>
 
-MODULE_LICENSE("BSD");
+#include "kernelIO.h"
+
+MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Ramy Shahin");
 MODULE_DESCRIPTION("Kernel-mode file manipulation module");
 
@@ -45,14 +47,40 @@ struct proc_dir_entry fpmod_proc_file = {
 };
 #endif
 
+const char* in0 = "/home/ramy/FileIOExp/a.bin";
+const char* out = "/home/ramy/FileIOExp/out.bin";
+
+const int IN_FLAGS = O_RDONLY | O_LARGEFILE;// | O_DIRECT;
+const int OUT_FLAGS = O_CREAT | O_WRONLY | O_LARGEFILE;// | O_DIRECT;
+
+struct file* fin;
+struct file* fout;
+
 static int __init fpmod_init(void)
 {
-    printk(KERN_INFO "Hello world!\n");
+    printk (KERN_INFO "Entering fpmod");
+        
+    fin = file_open(in0, IN_FLAGS, 0);
+    if (!fin) {
+        printk(KERN_INFO "Failed to open input file");
+        return -1;
+    }
+    
+    fout = file_open(out, OUT_FLAGS, S_IRWXU);
+    if (!fout) {
+        printk(KERN_INFO "Failed to open output file");
+        return -1;
+    }
+
+    printk(KERN_INFO "Module initialized");
+
     return 0;
 }
 
 static void __exit fpmod_cleanup(void)
 {
+    file_close(fout);
+    file_close(fin);
     printk(KERN_INFO "Cleaning up module.\n");
 }
 
