@@ -47,7 +47,7 @@ int file_read(struct file* file, unsigned long long offset, unsigned char* data,
 
     oldfs = get_fs();
     set_fs(get_ds());
-
+    //printk(KERN_INFO "data@ %x", (void*)data);
     ret = vfs_read(file, data, size, &offset);
 
     set_fs(oldfs);
@@ -62,7 +62,7 @@ int file_write(struct file* file, unsigned long long offset, unsigned char* data
     set_fs(get_ds());
 
     ret = vfs_write(file, data, size, &offset);
-
+    
     set_fs(oldfs);
     return ret;
 }

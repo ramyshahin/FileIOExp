@@ -6,7 +6,7 @@
 const long long K = 1000;
 const long long M = 1000 * K;
 const long long G = 1000 * M;
-const long long DATA_SET_SIZE = 10 * G;
+const long long DATA_SET_SIZE = 1 * G;
 
 using namespace std;
 
@@ -21,19 +21,22 @@ int main()
     fstream c("c.bin", mode);
     fstream aTimes2("aTimes2.bin", mode);
     fstream aPlusb("aPlusb.bin", mode);
-     
+    fstream bTimesc("bTimesc.bin", mode);
+ 
     for(long long i=0; i<DATA_SET_SIZE; i++) {
         int x = rand();
         int y = rand();
         int z = rand();
         int x2 = 2*x;
         int xy = x+y;
+	    int yz = y+z;
 
         a.write((char*)&x, sizeof(int));
         b.write((char*)&y, sizeof(int));
         c.write((char*)&z, sizeof(int));
         aTimes2.write((char*)&x2, sizeof(int));
         aPlusb.write((char*)&xy, sizeof(int));
+	bTimesc.write((char*)&yz, sizeof(int));
     }
 
     return 0;

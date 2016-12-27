@@ -1,0 +1,5 @@
+./baseline.out > baseline.perf
+./direct_in.out > direct_in.perf
+./direct_out.out > direct_out.perf
+./direct_both.out > direct_both.perf
+
