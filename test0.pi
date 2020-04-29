@@ -1,0 +1,196 @@
+#line 1 "/Users/ramy/projects/FileIOExp/test0.c" 1
+// test0.c 
+// y = x*2
+
+//#define DEBUG
+
+static const char* IN_A = "/home/ramy/FileIOExp/a.bin";
+static const char* IN_B = "/home/ramy/FileIOExp/b.bin";
+static const char* IN_C = "/home/ramy/FileIOExp/c.bin";
+
+static const char* OUT = "/home/ramy/FileIOExp/out.bin";
+
+static const int IN_FLAGS = O_RDONLY | O_LARGEFILE | O_DIRECT;
+static const int OUT_FLAGS = O_CREAT | O_WRONLY | O_LARGEFILE | O_DIRECT;
+
+#if definedEx(KERNEL_TEST)
+
+
+
+
+
+
+
+
+#endif
+#if !definedEx(KERNEL_TEST)
+
+
+
+
+
+
+
+
+#endif
+#if definedEx(DEBUG)
+
+#endif
+#if !definedEx(DEBUG)
+
+#endif
+
+
+static int a[((4*1024) / sizeof(int))]; __attribute__((aligned(8*(4*1024))));
+static int b[((4*1024) / sizeof(int))] __attribute__((aligned((4*1024))));
+
+static int runTest(unsigned int count)
+{
+    
+#if definedEx(KERNEL_TEST)
+struct file*
+#endif
+#if !definedEx(KERNEL_TEST)
+int
+#endif
+ fin;
+    
+#if definedEx(KERNEL_TEST)
+struct file*
+#endif
+#if !definedEx(KERNEL_TEST)
+int
+#endif
+ fout;
+    unsigned long long offset = 0;
+    long i = 0;
+    long j = 0;
+
+    fin = 
+#if definedEx(KERNEL_TEST)
+file_open
+#endif
+#if !definedEx(KERNEL_TEST)
+open
+#endif
+(IN_A, IN_FLAGS, 0);
+    if (!
+#if definedEx(KERNEL_TEST)
+(fin != 0)
+#endif
+#if !definedEx(KERNEL_TEST)
+(fin != -1)
+#endif
+) {
+        
+#if definedEx(KERNEL_TEST)
+(printk(KERN_INFO "Could not open file "))
+#endif
+#if !definedEx(KERNEL_TEST)
+(cerr << "Could not open file " << endl)
+#endif
+;
+        return -1;
+    }
+
+    fout = 
+#if definedEx(KERNEL_TEST)
+file_open
+#endif
+#if !definedEx(KERNEL_TEST)
+open
+#endif
+(OUT, OUT_FLAGS, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (!
+#if definedEx(KERNEL_TEST)
+(fout != 0)
+#endif
+#if !definedEx(KERNEL_TEST)
+(fout != -1)
+#endif
+) {
+        
+#if definedEx(KERNEL_TEST)
+(printk(KERN_INFO "Could not open file "))
+#endif
+#if !definedEx(KERNEL_TEST)
+(cerr << "Could not open file " << endl)
+#endif
+;
+        return -1;
+    }
+
+    //printk(KERN_INFO "&a: %x", (void*)a);
+    //printk(KERN_INFO "&b: %x", (void*)b);
+
+    for(i=0; i<count;) {
+        ssize_t bytesRead = 
+#if definedEx(KERNEL_TEST)
+file_read(fin, offset, a, (4*1024))
+#endif
+#if !definedEx(KERNEL_TEST)
+read(fin, a, (4*1024))
+#endif
+;
+        size_t itemsRead = bytesRead / sizeof(int);
+
+        //printk(KERN_INFO "bytes read %d", bytesRead);
+
+        if (bytesRead == 0) {
+            break;
+        }
+
+        for(j = 0; j<itemsRead; j++) {
+            b[j] = a[j]*2;
+        }
+
+        ssize_t bytesWritten = 
+#if definedEx(KERNEL_TEST)
+file_write(fout, offset, b, bytesRead)
+#endif
+#if !definedEx(KERNEL_TEST)
+write(fout, b, bytesRead)
+#endif
+;
+        if (bytesWritten != bytesRead) {
+            
+#if definedEx(KERNEL_TEST)
+(printk(KERN_INFO "read-write count mismatch"))
+#endif
+#if !definedEx(KERNEL_TEST)
+(cerr << "read-write count mismatch" << endl)
+#endif
+;
+        }
+
+        //DBGMSG("bytes written");
+
+        offset += bytesRead;
+        i += itemsRead;
+    }
+
+    
+#if definedEx(KERNEL_TEST)
+file_sync(fout)
+#endif
+#if !definedEx(KERNEL_TEST)
+fsync(fout)
+#endif
+;
+    
+#if definedEx(KERNEL_TEST)
+file_close(fin)
+#endif
+#if !definedEx(KERNEL_TEST)
+close(fin)
+#endif
+;
+    
+#if definedEx(KERNEL_TEST)
+file_close(fout)
+#endif
+#if !definedEx(KERNEL_TEST)
+close(fout)
+#endif
+;
+}
